@@ -13,6 +13,10 @@ import { TransactionType } from 'src/app/shared/enums/transaction-type.enum';
 import { Customer } from '../../models/customer.model';
 import { MOCK_CUSTOMERS } from '../../mocks/customer.mock';
 import { MOCK_REAL_ESTATES } from '../../mocks/real-estate.mock';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+
+
 
 @Component({
     templateUrl: './real-estate.component.html',
@@ -41,6 +45,8 @@ export class RealEstateComponent implements OnInit {
 selectedSeller: any = null;
 selectedLandlord: any = null;
 selectedTenant: any = null;
+searchFields: any[];
+selectedSearchField: string;
 
     realEstateTypes: SelectItem[] = [
         { label: 'Bina', value: RealEstateType.Building },
@@ -63,10 +69,44 @@ selectedTenant: any = null;
 
       }
 
+      downloadPdf() {
+        const data = document.getElementById('table-to-export'); // Tablonuzun ID'si
+        html2canvas(data).then((canvas) => {
+            const imgWidth = 208;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const contentDataURL = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const position = 0;
+            pdf.addImage(
+                contentDataURL,
+                'PNG',
+                0,
+                position,
+                imgWidth,
+                imgHeight
+            );
+            pdf.save('MYPdf.pdf');
+        });
+    }
+    clearSearch() {
+        // Arama alanlarını ve filtreleri sıfırla
+        this.selectedSearchField = null;
+        // Gerekiyorsa diğer ilgili alanları da sıfırlayın
+        // Örneğin: this.searchText = ''; veya this.selectedFilters = {};
+
+        // Eğer PrimeNG tablo filtrelerini programatik olarak temizlemek istiyorsanız:
+        // this.dt.reset();  // this.dt, p-table'a verdiğiniz bir template referansı olmalıdır.
+    }
+
     ngOnInit() {
         this.loadRealEstates();
         this.loadCustomers();
         this.resetSelectedRealEstate();
+        this.searchFields = [
+            {label: 'Metrekare', value: 'squareMeters'},
+            {label: 'Adres', value: 'address'},
+            // Diğer arama alanları...
+        ];
     }
 
     loadCustomers() {

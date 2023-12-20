@@ -8,23 +8,31 @@
                         pButton
                         label="Yeni Bina"
                         icon="pi pi-plus"
-                        class="p-button-success mr-2"
+                        class="p-button-success mr-3"
                         (click)="showAddRealEstateDialog()"
                     ></button>
                     <button
                         pButton
                         label="Sil"
                         icon="pi pi-trash"
-                        class="p-button-danger"
+                        class="p-button-danger mr-3"
                         (click)="deleteSelectedRealEstates()"
                         [disabled]="
                             !selectedRealEstates || !selectedRealEstates.length
                         "
                     ></button>
+                    <button
+                        pButton
+                        label="PDF İndir"
+                        icon="pi pi-file-pdf"
+                        class="p-button-help mr-3"
+                        (click)="downloadPdf()"
+                    ></button>
                 </div>
             </p-toolbar>
 
             <p-table
+                id="table-to-export"
                 [value]="realEstates"
                 [(selection)]="selectedRealEstates"
                 responsiveLayout="scroll"
@@ -46,14 +54,23 @@
                     >
                         <h5 class="m-0">Emlakları Yönet</h5>
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
-                            <i class="pi pi-search"></i>
-                            <input
-                                pInputText
-                                type="text"
-                                (input)="onGlobalFilter($event)"
-                                placeholder="Ara..."
-                                class="w-full sm:w-auto"
-                            />
+                            <button pButton type="button" label="Aramayı Temizle" icon="pi pi-times" class="p-button-danger mr-4" (click)="clearSearch()"></button>
+
+                  <!-- Arama Alanı Seçimi -->
+<div class="p-input-icon-left">
+    <i class="pi pi-search"></i>
+    <p-dropdown [options]="searchFields" [(ngModel)]="selectedSearchField" placeholder="Arama Alanını Seçin"></p-dropdown>
+
+</div>
+
+<!-- Dinamik Filtreleme -->
+<div *ngIf="selectedSearchField === 'squareMeters'" class="mt-3">
+    <p-columnFilter field="squareMeters" matchMode="equals" placeholder="Metrekareye Göre Ara" [showOperator]="true"></p-columnFilter>
+</div>
+<div *ngIf="selectedSearchField === 'address'" class="mt-3">
+    <p-columnFilter field="address" matchMode="contains" placeholder="Adrese Göre Ara"></p-columnFilter>
+</div>
+
                         </span>
                     </div>
                 </ng-template>
@@ -62,16 +79,19 @@
                         <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
                         <th>Tür</th>
                         <th>Durum</th>
-                        <th>Metre Kare</th>
-                        <th>Adres</th>
+                        <th>
+
+                      Metre KAare
+                        </th>
+                        <th>
+                         Adres
+                        </th>
                         <th>Şehir</th>
                         <th>İlçe</th>
                         <th *ngIf="transactionType === 'Satılık'">
                             Mal Sahibi Müşteri
                         </th>
-                        <th *ngIf="transactionType === 'Satılık'">
-                            Müşteri
-                        </th>
+                        <th *ngIf="transactionType === 'Satılık'">Müşteri</th>
                         <th>İşlemler</th>
                     </tr>
                 </ng-template>
@@ -94,7 +114,6 @@
                         <td>
                             {{ realEstate.buyerName }}
                         </td>
-
 
                         <td *ngIf="realEstate.status === 'Kiralık'">
                             {{ realEstate.landlordName }}
@@ -121,67 +140,62 @@
             </p-table>
         </div>
         <p-dialog
-        [(visible)]="realEstateDialog"
-        header="Gayrimenkul Detayları"
-        [style]="{ width: '800px' }"
-        [modal]="true"
-        class="p-fluid"
-    >
-        <div class="p-fluid">
+            [(visible)]="realEstateDialog"
+            header="Gayrimenkul Detayları"
+            [style]="{ width: '800px' }"
+            [modal]="true"
+            class="p-fluid"
+        >
+            <div class="p-fluid">
+                <div class="p-field-group mt-1 p-2">
+                    <p-dropdown
+                        id="type"
+                        [(ngModel)]="selectedRealEstate.type"
+                        [options]="realEstateTypes"
+                        optionLabel="label"
+                        placeholder="Tür Seçin"
+                        (onChange)="onTypeChange($event)"
+                    >
+                    </p-dropdown>
+                </div>
 
-            <div class="p-field-group mt-1 p-2">
+                <!-- Durum -->
+                <div class="p-field-group mt-1 p-2">
+                    <p-dropdown
+                        id="status"
+                        [(ngModel)]="selectedRealEstate.status"
+                        [options]="realEstateStatuses"
+                        optionLabel="label"
+                        placeholder="Durum Seçin"
+                        (onChange)="onStatusChange($event)"
+                    >
+                    </p-dropdown>
+                </div>
 
-                <p-dropdown
-                    id="type"
-                    [(ngModel)]="selectedRealEstate.type"
-                    [options]="realEstateTypes"
-                    optionLabel="label"
-                    placeholder="Tür Seçin"
-                    (onChange)="onTypeChange($event)"
-                >
-                </p-dropdown>
-            </div>
-
-            <!-- Durum -->
-            <div class="p-field-group mt-1 p-2">
-
-                <p-dropdown
-                    id="status"
-                    [(ngModel)]="selectedRealEstate.status"
-                    [options]="realEstateStatuses"
-                    optionLabel="label"
-                    placeholder="Durum Seçin"
-                    (onChange)="onStatusChange($event)"
-                >
-                </p-dropdown>
-            </div>
-
-            <!-- Metre Kare -->
-            <div class="p-field-group mt-1 p-2">
-                <label for="squareMeters">Metrekare</label>
-                <input
-                    id="squareMeters"
-                    [(ngModel)]="selectedRealEstate.squareMeters"
-                    type="number"
-                    pInputText
-                />
-            </div>
+                <!-- Metre Kare -->
+                <div class="p-field-group mt-1 p-2">
+                    <label for="squareMeters">Metrekare</label>
+                    <input
+                        id="squareMeters"
+                        [(ngModel)]="selectedRealEstate.squareMeters"
+                        type="number"
+                        pInputText
+                    />
+                </div>
 
                 <!-- Satış ve Kiralama İçin Ek Alanlar -->
 
-            <!-- Conditional Section for "Satılık" (For Sale) -->
+                <!-- Conditional Section for "Satılık" (For Sale) -->
 
                 <!-- Satış için satan müşteri seçimi -->
                 <div class="p-field-group mt-1 p-2">
-
                     <p-dropdown
-                    id="sellerId"
-                    [(ngModel)]="selectedRealEstate.sellerId"
-                    [options]="customerOptions"
-                    placeholder="Müşteri Seçin"
-                    (onChange)="onSellerChange($event.value)"
-                ></p-dropdown>
-
+                        id="sellerId"
+                        [(ngModel)]="selectedRealEstate.sellerId"
+                        [options]="customerOptions"
+                        placeholder="Müşteri Seçin"
+                        (onChange)="onSellerChange($event.value)"
+                    ></p-dropdown>
                 </div>
 
                 <div class="p-field-group mt-1 p-2">
@@ -194,66 +208,55 @@
                     ></p-dropdown>
                 </div>
 
+                <!-- Adres -->
+                <div class="p-field-group mt-1 p-2">
+                    <input
+                        placeholder="Adres"
+                        id="address"
+                        [(ngModel)]="selectedRealEstate.address"
+                        type="text"
+                        pInputText
+                    />
+                </div>
 
-            <!-- Adres -->
-            <div class="p-field-group mt-1 p-2">
+                <!-- Şehir -->
+                <div class="p-field-group mt-1 p-2">
+                    <input
+                        placeholder="Şehir"
+                        id="city"
+                        [(ngModel)]="selectedRealEstate.city"
+                        type="text"
+                        pInputText
+                    />
+                </div>
 
-                <input
-                    placeholder="Adres"
-                    id="address"
-                    [(ngModel)]="selectedRealEstate.address"
-                    type="text"
-                    pInputText
-                />
+                <!-- İlçe -->
+                <div class="p-field-group mt-1 p-2">
+                    <input
+                        placeholder="İlçe"
+                        id="district"
+                        [(ngModel)]="selectedRealEstate.district"
+                        type="text"
+                        pInputText
+                    />
+                </div>
             </div>
-
-            <!-- Şehir -->
-            <div class="p-field-group mt-1 p-2">
-
-                <input
-                    placeholder="Şehir"
-                    id="city"
-                    [(ngModel)]="selectedRealEstate.city"
-                    type="text"
-                    pInputText
-                />
-            </div>
-
-            <!-- İlçe -->
-            <div class="p-field-group mt-1 p-2">
-
-                <input
-                    placeholder="İlçe"
-                    id="district"
-                    [(ngModel)]="selectedRealEstate.district"
-                    type="text"
-                    pInputText
-                />
-            </div>
-
-
-
-        </div>
-        <p-footer>
-            <button
-                pButton
-                label="Kaydet"
-                icon="pi pi-check"
-                class="p-button-text"
-                (click)="saveRealEstate()"
-            ></button>
-            <button
-                pButton
-                label="İptal"
-                icon="pi pi-times"
-                class="p-button-text"
-                (click)="realEstateDialog = false"
-            ></button>
-        </p-footer>
-    </p-dialog>
-
+            <p-footer>
+                <button
+                    pButton
+                    label="Kaydet"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="saveRealEstate()"
+                ></button>
+                <button
+                    pButton
+                    label="İptal"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="realEstateDialog = false"
+                ></button>
+            </p-footer>
+        </p-dialog>
     </div>
 </div>
-
-
-
