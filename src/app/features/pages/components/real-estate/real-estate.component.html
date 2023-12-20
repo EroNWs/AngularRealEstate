@@ -3,7 +3,7 @@
         <div class="card">
             <p-toast></p-toast>
             <p-toolbar>
-                <div class="left">
+                <div class="my-2">
                     <button
                         pButton
                         label="Yeni Bina"
@@ -67,16 +67,10 @@
                         <th>Şehir</th>
                         <th>İlçe</th>
                         <th *ngIf="transactionType === 'Satılık'">
-                            Satın Alan Müşteri
+                            Mal Sahibi Müşteri
                         </th>
                         <th *ngIf="transactionType === 'Satılık'">
-                            Satan Müşteri
-                        </th>
-                        <th *ngIf="transactionType === 'Kiralık'">
-                            Kiralayan Müşteri
-                        </th>
-                        <th *ngIf="transactionType === 'Kiralık'">
-                            Kiracı Müşteri
+                            Müşteri
                         </th>
                         <th>İşlemler</th>
                     </tr>
@@ -94,19 +88,20 @@
                         <td>{{ realEstate.address }}</td>
                         <td>{{ realEstate.city }}</td>
                         <td>{{ realEstate.district }}</td>
-                        <td *ngIf="realEstate.status === 'Satılık'">
-                            {{ realEstate.buyerName }}
-                        </td>
-                        <td *ngIf="realEstate.status === 'Satılık'">
+                        <td>
                             {{ realEstate.sellerName }}
                         </td>
+                        <td>
+                            {{ realEstate.buyerName }}
+                        </td>
+
+
                         <td *ngIf="realEstate.status === 'Kiralık'">
                             {{ realEstate.landlordName }}
                         </td>
                         <td *ngIf="realEstate.status === 'Kiralık'">
                             {{ realEstate.tenantName }}
                         </td>
-                        <td></td>
                         <td>
                             <button
                                 pButton
@@ -175,34 +170,30 @@
                 <!-- Satış ve Kiralama İçin Ek Alanlar -->
 
             <!-- Conditional Section for "Satılık" (For Sale) -->
-            <div *ngIf="selectedRealEstate.status === 'Satılık'">
+
                 <!-- Satış için satan müşteri seçimi -->
                 <div class="p-field-group mt-1 p-2">
 
                     <p-dropdown
-                        id="sellerId"
-                        [(ngModel)]="selectedRealEstate.sellerId"
-                        [options]="customerOptions"
-                        placeholder="Müşteri Seçin"
-                        (onChange)="onSellerChange($event.value)"
-                    ></p-dropdown>
-                </div>
-            </div>
+                    id="sellerId"
+                    [(ngModel)]="selectedRealEstate.sellerId"
+                    [options]="customerOptions"
+                    placeholder="Müşteri Seçin"
+                    (onChange)="onSellerChange($event.value)"
+                ></p-dropdown>
 
-            <!-- Conditional Section for "Kiralık" (For Rent) -->
-            <div *ngIf="selectedRealEstate.status === 'Kiralık'">
-                <!-- Kiralama için kiralayan müşteri bilgisi -->
+                </div>
+
                 <div class="p-field-group mt-1 p-2">
-
                     <p-dropdown
-                        id="landlordId"
-                        [(ngModel)]="selectedRealEstate.landlordId"
+                        id="buyerId"
+                        [(ngModel)]="selectedRealEstate.buyerId"
                         [options]="customerOptions"
-                        placeholder="Müşteri Seçin"
-                        (onChange)="onSellerChange($event.value)"
+                        placeholder="Alıcı Seçin"
+                        (onChange)="onBuyerChange($event.value)"
                     ></p-dropdown>
                 </div>
-            </div>
+
 
             <!-- Adres -->
             <div class="p-field-group mt-1 p-2">

@@ -20,7 +20,13 @@ import { MOCK_REAL_ESTATES } from '../../mocks/real-estate.mock';
 })
 export class RealEstateComponent implements OnInit {
     realEstates: RealEstatePropertyForBuilding[] = [];
-    selectedRealEstate: RealEstatePropertyForBuilding;
+    selectedRealEstate: any = {
+        // other properties
+        buyerId: null, // Store buyer ID
+        sellerId: null, // Store seller ID
+        landlordId: null, // Store landlord ID
+        tenantId: null, // Store tenant ID
+    };
     selectedRealEstates: RealEstatePropertyForBuilding[] = [];
     realEstateDialog: boolean = false;
     transactionType: string = 'Satılık'; // Varsayılan değer olarak ayarlandı
@@ -31,6 +37,10 @@ export class RealEstateComponent implements OnInit {
     public sellerId: string;
     public landlordId: string;
     public tenantId: string;
+    selectedBuyer: any = null;
+selectedSeller: any = null;
+selectedLandlord: any = null;
+selectedTenant: any = null;
 
     realEstateTypes: SelectItem[] = [
         { label: 'Bina', value: RealEstateType.Building },
@@ -75,8 +85,6 @@ export class RealEstateComponent implements OnInit {
         this.selectedRealEstate.status = event.value;
         // sellerId ve landlordName'i sıfırlamaktan kaçının
     }
-
-
     onTransactionTypeChange(type) {
         this.transactionType = type;
     }
@@ -85,12 +93,26 @@ export class RealEstateComponent implements OnInit {
         const buyer = this.customers.find(customer => customer.id === buyerId);
         if (buyer) {
             this.selectedRealEstate.buyerName = `${buyer.customerName} ${buyer.customerSurname}`;
+        } else {
+            this.selectedRealEstate.buyerName = '';
         }
+        this.selectedRealEstate.buyerId = buyerId;
     }
 
+
     onSellerChange(sellerId: string) {
+        const seller = this.customers.find(customer => customer.id === sellerId);
+        if (seller) {
+            this.selectedRealEstate.sellerName = `${seller.customerName} ${seller.customerSurname}`;
+        } else {
+            this.selectedRealEstate.sellerName = '';
+        }
         this.selectedRealEstate.sellerId = sellerId;
+        console.log('Selected Seller ID:', sellerId);
     }
+
+
+
 
     getBuildings(): RealEstatePropertyForBuilding[] {
         return this.realEstates;
@@ -129,38 +151,69 @@ export class RealEstateComponent implements OnInit {
     }
 
     saveRealEstate() {
-        // Satış veya kiralama durumuna göre ilgili müşterileri bulun
-        let buyer, seller, landlord, tenant;
-        if (this.selectedRealEstate.status === 'Satılık') {
-            buyer = this.customers.find(c => c.id === this.selectedRealEstate.buyerId);
-            seller = this.customers.find(c => c.id === this.selectedRealEstate.sellerId);
-        } else if (this.selectedRealEstate.status === 'Kiralık') {
-            landlord = this.customers.find(c => c.id === this.selectedRealEstate.landlordId);
-            tenant = this.customers.find(c => c.id === this.selectedRealEstate.tenantId);
-        }
+        let realEstateToSave;
 
-        // İlgili isimleri atayın (eğer müşteri bulunursa)
-        this.selectedRealEstate.buyerName = buyer ? `${buyer.customerName} ${buyer.customerSurname}` : '';
-        this.selectedRealEstate.sellerName = seller ? `${seller.customerName} ${seller.customerSurname}` : '';
-        this.selectedRealEstate.landlordName = landlord ? `${landlord.customerName} ${landlord.customerSurname}` : '';
-        this.selectedRealEstate.tenantName = tenant ? `${tenant.customerName} ${tenant.customerSurname}` : '';
+        if (this.selectedRealEstate.id) {
+            // Mevcut gayrimenkulü güncelleme
+            realEstateToSave = new RealEstatePropertyForBuilding(
+                this.selectedRealEstate.id,
+                this.selectedRealEstate.type,
+                this.selectedRealEstate.status,
+                this.selectedRealEstate.squareMeters,
+                this.selectedRealEstate.address,
+                this.selectedRealEstate.city,
+                this.selectedRealEstate.district,
+                this.selectedRealEstate.roomCount,
+                this.selectedRealEstate.floor,
+                this.selectedRealEstate.buildingFloors,
+                this.selectedRealEstate.buildingAge,
+                this.selectedRealEstate.heatingType,
+                this.selectedRealEstate.sellerName,
+                this.selectedRealEstate.buyerName,
+                this.selectedRealEstate.landlordName,
+                this.selectedRealEstate.tenantName
+            );
 
-        // Güncelleme veya yeni ekleme işlemleri
-        const index = MOCK_REAL_ESTATES.findIndex(re => re.id === this.selectedRealEstate.id);
-        if (index > -1) {
-            // Mevcut gayrimenkulü güncelle
-            MOCK_REAL_ESTATES[index] = this.selectedRealEstate;
+            const index = MOCK_REAL_ESTATES.findIndex(re => re.id === this.selectedRealEstate.id);
+            if (index > -1) {
+                MOCK_REAL_ESTATES[index] = realEstateToSave;
+            }
         } else {
-            // Yeni gayrimenkulü ekle
-            this.selectedRealEstate.id = this.generateUniqueId();
-            MOCK_REAL_ESTATES.push(this.selectedRealEstate);
+            // Yeni gayrimenkul ekleme
+            realEstateToSave = new RealEstatePropertyForBuilding(
+                this.generateUniqueId(),
+                this.selectedRealEstate.type,
+                this.selectedRealEstate.status,
+                this.selectedRealEstate.squareMeters,
+                this.selectedRealEstate.address,
+                this.selectedRealEstate.city,
+                this.selectedRealEstate.district,
+                this.selectedRealEstate.roomCount,
+                this.selectedRealEstate.floor,
+                this.selectedRealEstate.buildingFloors,
+                this.selectedRealEstate.buildingAge,
+                this.selectedRealEstate.heatingType,
+                this.selectedRealEstate.sellerName,
+                '',
+                this.selectedRealEstate.landlordName,
+                this.selectedRealEstate.tenantName
+            );
+            console.log(realEstateToSave)
+
+            MOCK_REAL_ESTATES.push(realEstateToSave);
         }
+
+        // Tabloyu güncelle
+        console.log('Real Estate to Save:', realEstateToSave);
+        this.realEstates = [...MOCK_REAL_ESTATES];
 
         // Kullanıcıya başarılı işlem mesajı göster
-        this.messageService.add({severity: 'success', summary: 'Başarılı', detail: 'İşlem başarıyla kaydedildi'});
-        this.realEstates = [...MOCK_REAL_ESTATES]; // Ekranı güncellemek için
+        this.messageService.add({severity: 'success', summary: 'Başarılı', detail: 'Gayrimenkul başarıyla kaydedildi'});
+
+        // Diyalog penceresini kapat
         this.realEstateDialog = false;
     }
+
 
 
     generateUniqueId() {
