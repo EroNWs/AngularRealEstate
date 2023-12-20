@@ -25,6 +25,12 @@ export class EstateAgentComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef
     ) {}
 
+    ngOnInit() {
+        this.selectedEstateAgent = {};
+        this.loadEstateAgents();
+    }
+
+
     getEstateAgents(): EstateAgent[] {
         return MOCK_ESTATE_AGENTS;
     }
@@ -44,21 +50,17 @@ export class EstateAgentComponent implements OnInit {
 
 
     updateEstateAgent(agent: EstateAgent):void {
-     // Mevcut emlakçıyı güncelle
-     const index = this.estateAgents.findIndex(agent => agent.id === this.selectedEstateAgent.id);
-     if (index !== -1) {
-         MOCK_ESTATE_AGENTS[index] = agent;
-     }
+   // Mevcut emlakçıyı güncelle
+   const index = this.estateAgents.findIndex(a => a.id === agent.id);
+   if (index !== -1) {
+       MOCK_ESTATE_AGENTS[index] = agent;
+       this.estateAgents[index] = agent;
+   }
 
-     this.estateAgentService.updateEstateAgent(this.selectedEstateAgent);
+   this.estateAgentService.updateEstateAgent(agent);
 
-     if (index !== -1) {
-         this.estateAgents[index] = this.selectedEstateAgent;
-     }
-
-
-    this.estateAgentDialog = false;
-    this.selectedEstateAgent = new EstateAgent();
+   this.estateAgentDialog = false;
+   this.selectedEstateAgent = new EstateAgent();
 }
 
 
@@ -69,20 +71,20 @@ export class EstateAgentComponent implements OnInit {
         }
     }
 
-    ngOnInit() {
-        this.loadEstateAgents();
-    }
+
 
 
 loadEstateAgents() {
-    // ...
+    this.isLoading = true; // Yükleme başlıyor
     this.estateAgentService.getEstateAgents().subscribe(
         (data) => {
             this.estateAgents = data;
-            this.isLoading = false;
-            this.changeDetectorRef.detectChanges(); // Değişiklikleri algıla
+            this.isLoading = false; // Yükleme tamamlandı
         },
-        // ...
+        (error) => {
+            this.isLoading = false; // Hata durumunda yükleme durduruluyor
+         console.log("Hata var");
+        }
     );
 }
 
