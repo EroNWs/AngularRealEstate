@@ -6,11 +6,15 @@ import {
     RealEstatePropertyForLand,
 } from '../models/real-estate.model';
 import { MOCK_REAL_ESTATES } from '../mocks/real-estate.mock';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RealEstateService {
+
+    constructor(private http: HttpClient) {}
+
     getBuildings(): Observable<RealEstatePropertyForBuilding[]> {
         const buildings = MOCK_REAL_ESTATES.filter(estate => estate instanceof RealEstatePropertyForBuilding);
         return of(buildings as RealEstatePropertyForBuilding[]);
@@ -41,4 +45,19 @@ export class RealEstateService {
         }
         return of(undefined);
     }
+
+
+  saveSale(realEstate: RealEstatePropertyForBuilding): Observable<any> {
+    // API'ye POST isteği gönderme
+    return this.http.post('/api/sales', realEstate);
+  }
+
+  saveRental(realEstate: RealEstatePropertyForBuilding): Observable<any> {
+    // API'ye POST isteği gönderme
+    return this.http.post('/api/rentals', realEstate);
+  }
+
+
+
+
 }

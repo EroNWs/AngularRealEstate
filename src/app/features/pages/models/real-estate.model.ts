@@ -13,11 +13,17 @@ export class RealEstate {
         public address: string = '',
         public city: string = '',
         public district: string = '',
-        public transactionType: TransactionType = TransactionType.None // Diğer özellikler...
+        public sellerName: string = '',
+        public buyerName: string ='',
+        public landlordName: string ='',
+        public tenantName: string='',
+        public transactionType: TransactionType = TransactionType.None,
+
     ) {}
 }
 
 export class RealEstatePropertyForBuilding extends RealEstate {
+
     constructor(
         id: string = '',
         type: RealEstateType = RealEstateType.Building,
@@ -30,19 +36,17 @@ export class RealEstatePropertyForBuilding extends RealEstate {
         public floor: number = 0,
         public buildingFloors: number = 0,
         public buildingAge: number = 0,
-        public heatingType: HeatingSystemType = HeatingSystemType.NaturalGasOperated
+        public heatingType: HeatingSystemType = HeatingSystemType.NaturalGasOperated,
+        sellerName?: string,
+        buyerName?: string,
+        landlordName?: string,
+        tenantName?: string
     ) {
-        super(
-            id,
-            type,
-            status,
-            squareMeters,
-            address,
-            city,
-            district,
-            TransactionType.None
-        );
-        // Diğer özellikler...
+        super(id, type, status, squareMeters, address, city, district, TransactionType.None);
+        this.sellerName = sellerName;
+        this.buyerName = buyerName;
+        this.landlordName = landlordName;
+        this.tenantName = tenantName;
     }
 }
 

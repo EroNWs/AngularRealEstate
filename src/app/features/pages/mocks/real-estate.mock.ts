@@ -20,6 +20,10 @@ export const MOCK_REAL_ESTATES: RealEstatePropertyForBuilding[] = [
         2,
         5,
         10,
-        HeatingSystemType.NaturalGasOperated
+        HeatingSystemType.NaturalGasOperated,
+        'Ahmet Yılmaz', // Satıcı adı
+        'Mehmet Öz'    // Alıcı adı
     ),
+    // Diğer örnek kayıtlar...
 ];
+

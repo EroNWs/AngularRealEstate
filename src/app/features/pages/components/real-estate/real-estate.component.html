@@ -66,22 +66,27 @@
                         <th>Adres</th>
                         <th>Şehir</th>
                         <th>İlçe</th>
+                        <th *ngIf="transactionType === 'Satılık'">Satın Alan Müşteri</th>
+        <th *ngIf="transactionType === 'Satılık'">Satan Müşteri</th>
+        <th *ngIf="transactionType === 'Kiralık'">Kiralayan Müşteri</th>
+        <th *ngIf="transactionType === 'Kiralık'">Kiracı Müşteri</th>
                         <th>İşlemler</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-realEstate>
                     <tr>
-                        <td>
-                            <p-tableCheckbox
-                                [value]="realEstate"
-                            ></p-tableCheckbox>
-                        </td>
-                        <td>{{ realEstate.type }}</td>
-                        <td>{{ realEstate.status }}</td>
+                        <td><p-tableCheckbox [value]="realEstate"></p-tableCheckbox></td>
+                        <td>{{ realEstate.type.label }}</td>
+                        <td>{{ realEstate.status.label }}</td>
                         <td>{{ realEstate.squareMeters }}</td>
                         <td>{{ realEstate.address }}</td>
                         <td>{{ realEstate.city }}</td>
                         <td>{{ realEstate.district }}</td>
+                        <td *ngIf="realEstate.status === 'Satılık'">{{ realEstate.buyerName }}</td>
+                        <td *ngIf="realEstate.status === 'Satılık'">{{ realEstate.sellerName }}</td>
+                        <td *ngIf="realEstate.status === 'Kiralık'">{{ realEstate.landlordName }}</td>
+                        <td *ngIf="realEstate.status === 'Kiralık'">{{ realEstate.tenantName }}</td>
+                        <td>
                         <td>
                             <button
                                 pButton
@@ -103,28 +108,92 @@
     </div>
 </div>
 
-<!-- Real Estate Dialog içeriği -->
-<p-dialog [(visible)]="realEstateDialog" header="Gayrimenkul Detayları">
-    <!-- Diğer içerikler -->
-    <div class="p-field">
-        <label for="transactionType">İşlem Türü</label>
-        <p-dropdown
-            id="transactionType"
-            [(ngModel)]="transactionType"
-            [options]="transactionTypes"
-            optionLabel="label"
-            placeholder="İşlem Türü Seçin"
-            (onChange)="onTransactionTypeChange($event.value)"
-        ></p-dropdown>
-    </div>
+<p-dialog [(visible)]="realEstateDialog" header="Gayrimenkul Detayları" [modal]="true">
+    <div class="p-fluid">
+     <!-- Tür -->
+<!-- Tür -->
+<div class="p-field">
+    <label for="type">Tür</label>
+    <p-dropdown
+        id="type"
+        [(ngModel)]="selectedRealEstate.type"
+        [options]="realEstateTypes"
+        optionLabel="label"
+        placeholder="Tür Seçin"
+        (onChange)="onTypeChange($event)">
+    </p-dropdown>
+</div>
 
-    <div *ngIf="transactionType === 'sale'">
-        <!-- Satış için gerekli alanlar -->
-    </div>
+<!-- Durum -->
+<div class="p-field">
+    <label for="status">Durum</label>
+    <p-dropdown
+        id="status"
+        [(ngModel)]="selectedRealEstate.status"
+        [options]="realEstateStatuses"
+        optionLabel="label"
+        placeholder="Durum Seçin"
+        (onChange)="onStatusChange($event)">
+    </p-dropdown>
+</div>
 
-    <div *ngIf="transactionType === 'rental'">
-        <!-- Kiralama için gerekli alanlar -->
-    </div>
+        <!-- Metre Kare -->
+        <div class="p-field">
+            <label for="squareMeters">Metrekare</label>
+            <input id="squareMeters" [(ngModel)]="selectedRealEstate.squareMeters" type="number" pInputText />
+        </div>
 
-    <!-- Ortak alanlar (Adres, Metrekare vb.) -->
+        <!-- Adres -->
+        <div class="p-field">
+            <label for="address">Adres</label>
+            <input id="address" [(ngModel)]="selectedRealEstate.address" type="text" pInputText />
+        </div>
+
+        <!-- Şehir -->
+        <div class="p-field">
+            <label for="city">Şehir</label>
+            <input id="city" [(ngModel)]="selectedRealEstate.city" type="text" pInputText />
+        </div>
+
+        <!-- İlçe -->
+        <div class="p-field">
+            <label for="district">İlçe</label>
+            <input id="district" [(ngModel)]="selectedRealEstate.district" type="text" pInputText />
+        </div>
+
+        <!-- Satış ve Kiralama İçin Ek Alanlar -->
+        <div *ngIf="selectedRealEstate.transactionType === TransactionTypeEnum.Sale">
+            <!-- Alan Müşteri Seçimi -->
+            <div class="p-field">
+                <label for="buyerId">Alan Müşteri</label>
+                <p-dropdown id="buyerId" [(ngModel)]="selectedRealEstate.buyerId" [options]="customerOptions" placeholder="Müşteri Seçin" (onChange)="onBuyerChange($event.value)"></p-dropdown>
+            </div>
+            <!-- Satan Müşteri Seçimi -->
+            <div class="p-field">
+                <label for="sellerId">Satan Müşteri</label>
+                <p-dropdown id="sellerId" [(ngModel)]="selectedRealEstate.sellerId" [options]="customerOptions" placeholder="Müşteri Seçin" (onChange)="onSellerChange($event.value)"></p-dropdown>
+            </div>
+        </div>
+
+        <div *ngIf="selectedRealEstate.transactionType === TransactionTypeEnum.Rental">
+            <div class="p-field">
+                <label for="landlordName">Kiralayan Müşteri Adı ve Soyadı</label>
+                <input id="landlordName" [(ngModel)]="selectedRealEstate.landlordName" type="text" pInputText />
+            </div>
+            <div class="p-field">
+                <label for="tenantName">Kiracı Müşteri Adı ve Soyadı</label>
+                <input id="tenantName" [(ngModel)]="selectedRealEstate.tenantName" type="text" pInputText />
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <p-footer>
+            <button pButton label="Kaydet" (click)="saveRealEstate()"></button>
+            <button pButton label="İptal" (click)="realEstateDialog = false"></button>
+        </p-footer>
+    </div>
 </p-dialog>
+
+
+
+
