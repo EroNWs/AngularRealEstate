@@ -122,16 +122,18 @@
 <!-- Estate Agent Kayıt ve Düzenleme Dialogu -->
 <p-dialog
     [(visible)]="estateAgentDialog"
-    [style]="{ width: '650px' }"
+    [style]="{ width: '800px' }"
     header="Emlakçı Detayları"
     [modal]="true"
+    class="p-fluid"
 >
     <div class="p-fluid">
         <div class="p-formgrid p-grid">
             <!-- Emlakçı Adı -->
             <div class="p-field p-col-12">
-                <label for="agentName">Emlakçı Adı</label>
+
                 <input
+                placeholder="Emlakçı Adı"
                     id="agentName"
                     type="text"
                     pInputText
@@ -140,8 +142,9 @@
             </div>
             <!-- Yetkili Adı -->
             <div class="p-field p-col-6">
-                <label for="authorizedName">Yetkili Adı</label>
+
                 <input
+                placeholder="Yetkili Adı"
                     id="authorizedName"
                     type="text"
                     pInputText
@@ -151,8 +154,9 @@
 
             <!-- Şehir -->
             <div class="p-field p-col-6">
-                <label for="city">Şehir</label>
+
                 <input
+                placeholder="Şehir"
                     id="city"
                     type="text"
                     pInputText
@@ -161,8 +165,9 @@
             </div>
             <!-- İlçe -->
             <div class="p-field p-col-6">
-                <label for="district">İlçe</label>
+
                 <input
+                placeholder="İlçe"
                     id="district"
                     type="text"
                     pInputText
@@ -171,10 +176,11 @@
             </div>
 
             <div class="p-field p-col-12">
-                <label for="phone">Telefon</label>
+
                 <input
+                placeholder="Telefon"
                     id="phone"
-                    type="text"
+                    type="phone"
                     pInputText
                     [(ngModel)]="selectedEstateAgent.phone"
                     phoneFormat

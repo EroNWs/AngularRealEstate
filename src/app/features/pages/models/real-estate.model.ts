@@ -17,6 +17,10 @@ export class RealEstate {
         public buyerName: string ='',
         public landlordName: string ='',
         public tenantName: string='',
+        public buyerId?: string,
+        public sellerId?: string,
+        public landlordId?: string,
+        public tenantId?: string,
         public transactionType: TransactionType = TransactionType.None,
 
     ) {}

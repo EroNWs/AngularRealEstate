@@ -23,10 +23,14 @@ export class RealEstateComponent implements OnInit {
     selectedRealEstate: RealEstatePropertyForBuilding;
     selectedRealEstates: RealEstatePropertyForBuilding[] = [];
     realEstateDialog: boolean = false;
-    transactionType: string = TransactionType.Sale; // Varsayılan değer olarak ayarlandı
+    transactionType: string = 'Satılık'; // Varsayılan değer olarak ayarlandı
     TransactionTypeEnum = TransactionType; // Şablon için enum özelliği
     customers: Customer[] = [];
     customerOptions: SelectItem[];
+    public buyerId: string;
+    public sellerId: string;
+    public landlordId: string;
+    public tenantId: string;
 
     realEstateTypes: SelectItem[] = [
         { label: 'Bina', value: RealEstateType.Building },
@@ -43,8 +47,11 @@ export class RealEstateComponent implements OnInit {
 
     constructor(
         private realEstateService: RealEstateService,
-        private messageService: MessageService // MessageService enjekte ediliyor
-      ) {}
+        private messageService: MessageService
+
+      ) {
+
+      }
 
     ngOnInit() {
         this.loadRealEstates();
@@ -64,10 +71,11 @@ export class RealEstateComponent implements OnInit {
     onTypeChange(event: any) {
         this.selectedRealEstate.type = event.value;
     }
-
     onStatusChange(event: any) {
         this.selectedRealEstate.status = event.value;
+        // sellerId ve landlordName'i sıfırlamaktan kaçının
     }
+
 
     onTransactionTypeChange(type) {
         this.transactionType = type;
@@ -81,10 +89,7 @@ export class RealEstateComponent implements OnInit {
     }
 
     onSellerChange(sellerId: string) {
-        const seller = this.customers.find(customer => customer.id === sellerId);
-        if (seller) {
-            this.selectedRealEstate.sellerName = `${seller.customerName} ${seller.customerSurname}`;
-        }
+        this.selectedRealEstate.sellerId = sellerId;
     }
 
     getBuildings(): RealEstatePropertyForBuilding[] {
@@ -123,8 +128,24 @@ export class RealEstateComponent implements OnInit {
         this.realEstateDialog = true;
     }
 
-
     saveRealEstate() {
+        // Satış veya kiralama durumuna göre ilgili müşterileri bulun
+        let buyer, seller, landlord, tenant;
+        if (this.selectedRealEstate.status === 'Satılık') {
+            buyer = this.customers.find(c => c.id === this.selectedRealEstate.buyerId);
+            seller = this.customers.find(c => c.id === this.selectedRealEstate.sellerId);
+        } else if (this.selectedRealEstate.status === 'Kiralık') {
+            landlord = this.customers.find(c => c.id === this.selectedRealEstate.landlordId);
+            tenant = this.customers.find(c => c.id === this.selectedRealEstate.tenantId);
+        }
+
+        // İlgili isimleri atayın (eğer müşteri bulunursa)
+        this.selectedRealEstate.buyerName = buyer ? `${buyer.customerName} ${buyer.customerSurname}` : '';
+        this.selectedRealEstate.sellerName = seller ? `${seller.customerName} ${seller.customerSurname}` : '';
+        this.selectedRealEstate.landlordName = landlord ? `${landlord.customerName} ${landlord.customerSurname}` : '';
+        this.selectedRealEstate.tenantName = tenant ? `${tenant.customerName} ${tenant.customerSurname}` : '';
+
+        // Güncelleme veya yeni ekleme işlemleri
         const index = MOCK_REAL_ESTATES.findIndex(re => re.id === this.selectedRealEstate.id);
         if (index > -1) {
             // Mevcut gayrimenkulü güncelle
@@ -136,10 +157,11 @@ export class RealEstateComponent implements OnInit {
         }
 
         // Kullanıcıya başarılı işlem mesajı göster
-        this.messageService.add({severity:'success', summary:'Başarılı', detail:'İşlem başarıyla kaydedildi'});
-        this.loadRealEstates();
+        this.messageService.add({severity: 'success', summary: 'Başarılı', detail: 'İşlem başarıyla kaydedildi'});
+        this.realEstates = [...MOCK_REAL_ESTATES]; // Ekranı güncellemek için
         this.realEstateDialog = false;
     }
+
 
     generateUniqueId() {
         // Basit bir ID üretici
