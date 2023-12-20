@@ -125,142 +125,144 @@
                 </ng-template>
             </p-table>
         </div>
+        <p-dialog
+        [(visible)]="realEstateDialog"
+        header="Gayrimenkul Detayları"
+        [style]="{ width: '800px' }"
+        [modal]="true"
+        class="p-fluid"
+    >
+        <div class="p-fluid">
+
+            <div class="p-field-group mt-1 p-2">
+
+                <p-dropdown
+                    id="type"
+                    [(ngModel)]="selectedRealEstate.type"
+                    [options]="realEstateTypes"
+                    optionLabel="label"
+                    placeholder="Tür Seçin"
+                    (onChange)="onTypeChange($event)"
+                >
+                </p-dropdown>
+            </div>
+
+            <!-- Durum -->
+            <div class="p-field-group mt-1 p-2">
+
+                <p-dropdown
+                    id="status"
+                    [(ngModel)]="selectedRealEstate.status"
+                    [options]="realEstateStatuses"
+                    optionLabel="label"
+                    placeholder="Durum Seçin"
+                    (onChange)="onStatusChange($event)"
+                >
+                </p-dropdown>
+            </div>
+
+            <!-- Metre Kare -->
+            <div class="p-field-group mt-1 p-2">
+                <label for="squareMeters">Metrekare</label>
+                <input
+                    id="squareMeters"
+                    [(ngModel)]="selectedRealEstate.squareMeters"
+                    type="number"
+                    pInputText
+                />
+            </div>
+
+                <!-- Satış ve Kiralama İçin Ek Alanlar -->
+
+            <!-- Conditional Section for "Satılık" (For Sale) -->
+            <div *ngIf="selectedRealEstate.status === 'Satılık'">
+                <!-- Satış için satan müşteri seçimi -->
+                <div class="p-field-group mt-1 p-2">
+
+                    <p-dropdown
+                        id="sellerId"
+                        [(ngModel)]="selectedRealEstate.sellerId"
+                        [options]="customerOptions"
+                        placeholder="Müşteri Seçin"
+                        (onChange)="onSellerChange($event.value)"
+                    ></p-dropdown>
+                </div>
+            </div>
+
+            <!-- Conditional Section for "Kiralık" (For Rent) -->
+            <div *ngIf="selectedRealEstate.status === 'Kiralık'">
+                <!-- Kiralama için kiralayan müşteri bilgisi -->
+                <div class="p-field-group mt-1 p-2">
+
+                    <p-dropdown
+                        id="landlordId"
+                        [(ngModel)]="selectedRealEstate.landlordId"
+                        [options]="customerOptions"
+                        placeholder="Müşteri Seçin"
+                        (onChange)="onSellerChange($event.value)"
+                    ></p-dropdown>
+                </div>
+            </div>
+
+            <!-- Adres -->
+            <div class="p-field-group mt-1 p-2">
+
+                <input
+                    placeholder="Adres"
+                    id="address"
+                    [(ngModel)]="selectedRealEstate.address"
+                    type="text"
+                    pInputText
+                />
+            </div>
+
+            <!-- Şehir -->
+            <div class="p-field-group mt-1 p-2">
+
+                <input
+                    placeholder="Şehir"
+                    id="city"
+                    [(ngModel)]="selectedRealEstate.city"
+                    type="text"
+                    pInputText
+                />
+            </div>
+
+            <!-- İlçe -->
+            <div class="p-field-group mt-1 p-2">
+
+                <input
+                    placeholder="İlçe"
+                    id="district"
+                    [(ngModel)]="selectedRealEstate.district"
+                    type="text"
+                    pInputText
+                />
+            </div>
+
+
+
+        </div>
+        <p-footer>
+            <button
+                pButton
+                label="Kaydet"
+                icon="pi pi-check"
+                class="p-button-text"
+                (click)="saveRealEstate()"
+            ></button>
+            <button
+                pButton
+                label="İptal"
+                icon="pi pi-times"
+                class="p-button-text"
+                (click)="realEstateDialog = false"
+            ></button>
+        </p-footer>
+    </p-dialog>
+
     </div>
 </div>
 
-<p-dialog
-    [(visible)]="realEstateDialog"
-    header="Gayrimenkul Detayları"
-    [style]="{ width: '800px' }"
-    [modal]="true"
-    class="p-fluid"
->
-    <div class="p-fluid">
 
-        <div class="p-field">
-            <label for="type">Tür</label>
-            <p-dropdown
-                id="type"
-                [(ngModel)]="selectedRealEstate.type"
-                [options]="realEstateTypes"
-                optionLabel="label"
-                placeholder="Tür Seçin"
-                (onChange)="onTypeChange($event)"
-            >
-            </p-dropdown>
-        </div>
-
-        <!-- Durum -->
-        <div class="p-field">
-            <label for="status">Durum</label>
-            <p-dropdown
-                id="status"
-                [(ngModel)]="selectedRealEstate.status"
-                [options]="realEstateStatuses"
-                optionLabel="label"
-                placeholder="Durum Seçin"
-                (onChange)="onStatusChange($event)"
-            >
-            </p-dropdown>
-        </div>
-
-        <!-- Metre Kare -->
-        <div class="p-field">
-            <label for="squareMeters">Metrekare</label>
-            <input
-                id="squareMeters"
-                [(ngModel)]="selectedRealEstate.squareMeters"
-                type="number"
-                pInputText
-            />
-        </div>
-
-        <!-- Adres -->
-        <div class="p-field">
-
-            <input
-            placeholder="Adres"
-                id="address"
-                [(ngModel)]="selectedRealEstate.address"
-                type="text"
-                pInputText
-            />
-        </div>
-
-        <!-- Şehir -->
-        <div class="p-field">
-
-            <input
-            placeholder="Şehir"
-                id="city"
-                [(ngModel)]="selectedRealEstate.city"
-                type="text"
-                pInputText
-            />
-        </div>
-
-        <!-- İlçe -->
-        <div class="p-field">
-
-            <input
-            placeholder="İlçe"
-                id="district"
-                [(ngModel)]="selectedRealEstate.district"
-                type="text"
-                pInputText
-            />
-        </div>
-
-        <!-- Satış ve Kiralama İçin Ek Alanlar -->
-
-        <!-- Conditional Section for "Satılık" (For Sale) -->
-        <div *ngIf="selectedRealEstate.status === 'Satılık'">
-            <!-- Satış için satan müşteri seçimi -->
-            <div class="p-field">
-                <label for="sellerId">Satan Müşteri</label>
-                <p-dropdown
-                    id="sellerId"
-                    [(ngModel)]="selectedRealEstate.sellerId"
-                    [options]="customerOptions"
-                    placeholder="Müşteri Seçin"
-                    (onChange)="onSellerChange($event.value)"
-                ></p-dropdown>
-            </div>
-        </div>
-
-        <!-- Conditional Section for "Kiralık" (For Rent) -->
-        <div *ngIf="selectedRealEstate.status === 'Kiralık'">
-            <!-- Kiralama için kiralayan müşteri bilgisi -->
-            <div class="p-field">
-                <label for="landlordId">Kiralayan Müşteri</label>
-                <p-dropdown
-                    id="landlordId"
-                    [(ngModel)]="selectedRealEstate.landlordId"
-                    [options]="customerOptions"
-                    placeholder="Müşteri Seçin"
-                    (onChange)="onSellerChange($event.value)"
-                ></p-dropdown>
-            </div>
-        </div>
-
-
-
-    </div>
-    <p-footer>
-        <button
-            pButton
-            label="Kaydet"
-            icon="pi pi-check"
-            class="p-button-text"
-            (click)="saveRealEstate()"
-        ></button>
-        <button
-            pButton
-            label="İptal"
-            icon="pi pi-times"
-            class="p-button-text"
-            (click)="realEstateDialog = false"
-        ></button>
-    </p-footer>
-</p-dialog>
 

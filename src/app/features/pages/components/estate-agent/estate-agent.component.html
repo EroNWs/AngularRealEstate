@@ -116,92 +116,93 @@
                 </p-table>
             </div>
         </div>
+        <!-- Estate Agent Kayıt ve Düzenleme Dialogu -->
+<p-dialog
+[(visible)]="estateAgentDialog"
+[style]="{ width: '800px' }"
+header="Emlakçı Detayları"
+[modal]="true"
+class="p-fluid"
+>
+<div class="p-fluid">
+    <div class="p-formgrid p-grid">
+        <!-- Emlakçı Adı -->
+        <div class="p-field p-col-12 mt-1 p-2">
+
+            <input
+            placeholder="Emlakçı Adı"
+                id="agentName"
+                type="text"
+                pInputText
+                [(ngModel)]="selectedEstateAgent.agentName"
+            />
+        </div>
+        <!-- Yetkili Adı -->
+        <div class="p-field p-col-6 mt-1 p-2">
+
+            <input
+            placeholder="Yetkili Adı"
+                id="authorizedName"
+                type="text"
+                pInputText
+                [(ngModel)]="selectedEstateAgent.authorizedName"
+            />
+        </div>
+
+        <!-- Şehir -->
+        <div class="p-field p-col-6 mt-1 p-2">
+
+            <input
+            placeholder="Şehir"
+                id="city"
+                type="text"
+                pInputText
+                [(ngModel)]="selectedEstateAgent.city"
+            />
+        </div>
+        <!-- İlçe -->
+        <div class="p-field p-col-6 mt-1 p-2">
+
+            <input
+            placeholder="İlçe"
+                id="district"
+                type="text"
+                pInputText
+                [(ngModel)]="selectedEstateAgent.district"
+            />
+        </div>
+
+        <div class="p-field p-col-12 mt-1 p-2">
+
+            <input
+            placeholder="Telefon"
+                id="phone"
+                type="phone"
+                pInputText
+                [(ngModel)]="selectedEstateAgent.phone"
+                phoneFormat
+            />
+        </div>
+    </div>
+</div>
+<p-footer>
+    <button
+        pButton
+        label="İptal"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="hideEstateAgentDialog()"
+    ></button>
+    <button
+        pButton
+        label="Kaydet"
+        icon="pi pi-check"
+        class="p-button-text"
+        (click)="saveUpdateEstateAgent()"
+    ></button>
+</p-footer>
+</p-dialog>
     </div>
 </div>
 
-<!-- Estate Agent Kayıt ve Düzenleme Dialogu -->
-<p-dialog
-    [(visible)]="estateAgentDialog"
-    [style]="{ width: '800px' }"
-    header="Emlakçı Detayları"
-    [modal]="true"
-    class="p-fluid"
->
-    <div class="p-fluid">
-        <div class="p-formgrid p-grid">
-            <!-- Emlakçı Adı -->
-            <div class="p-field p-col-12">
 
-                <input
-                placeholder="Emlakçı Adı"
-                    id="agentName"
-                    type="text"
-                    pInputText
-                    [(ngModel)]="selectedEstateAgent.agentName"
-                />
-            </div>
-            <!-- Yetkili Adı -->
-            <div class="p-field p-col-6">
-
-                <input
-                placeholder="Yetkili Adı"
-                    id="authorizedName"
-                    type="text"
-                    pInputText
-                    [(ngModel)]="selectedEstateAgent.authorizedName"
-                />
-            </div>
-
-            <!-- Şehir -->
-            <div class="p-field p-col-6">
-
-                <input
-                placeholder="Şehir"
-                    id="city"
-                    type="text"
-                    pInputText
-                    [(ngModel)]="selectedEstateAgent.city"
-                />
-            </div>
-            <!-- İlçe -->
-            <div class="p-field p-col-6">
-
-                <input
-                placeholder="İlçe"
-                    id="district"
-                    type="text"
-                    pInputText
-                    [(ngModel)]="selectedEstateAgent.district"
-                />
-            </div>
-
-            <div class="p-field p-col-12">
-
-                <input
-                placeholder="Telefon"
-                    id="phone"
-                    type="phone"
-                    pInputText
-                    [(ngModel)]="selectedEstateAgent.phone"
-                    phoneFormat
-                />
-            </div>
-        </div>
-    </div>
-    <p-footer>
-        <button
-            pButton
-            label="İptal"
-            icon="pi pi-times"
-            class="p-button-text"
-            (click)="hideEstateAgentDialog()"
-        ></button>
-        <button
-            pButton
-            label="Kaydet"
-            icon="pi pi-check"
-            class="p-button-text"
-            (click)="saveUpdateEstateAgent()"
-        ></button>
-    </p-footer>
-</p-dialog>
