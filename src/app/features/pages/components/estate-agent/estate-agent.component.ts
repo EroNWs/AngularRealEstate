@@ -17,6 +17,7 @@ export class EstateAgentComponent implements OnInit {
     selectedEstateAgent: any;
     estateAgentDialog: boolean = false;
     isLoading: boolean = true;
+    isNewEstateAgent: boolean = false;
 
     constructor(
         private estateAgentService: EstateAgentService,
@@ -31,12 +32,35 @@ export class EstateAgentComponent implements OnInit {
         MOCK_ESTATE_AGENTS.push(agent);
     }
 
-    updateEstateAgent(agent: EstateAgent): void {
-        const index = MOCK_ESTATE_AGENTS.findIndex((a) => a.id === agent.id);
-        if (index !== -1) {
-            MOCK_ESTATE_AGENTS[index] = agent;
+
+
+    saveUpdateEstateAgent() {
+        if (this.isNewEstateAgent) {
+            this.saveEstateAgent();
+        } else {
+            this.updateEstateAgent(this.selectedEstateAgent);
         }
     }
+
+
+    updateEstateAgent(agent: EstateAgent):void {
+     // Mevcut emlakçıyı güncelle
+     const index = this.estateAgents.findIndex(agent => agent.id === this.selectedEstateAgent.id);
+     if (index !== -1) {
+         MOCK_ESTATE_AGENTS[index] = agent;
+     }
+
+     this.estateAgentService.updateEstateAgent(this.selectedEstateAgent);
+
+     if (index !== -1) {
+         this.estateAgents[index] = this.selectedEstateAgent;
+     }
+
+
+    this.estateAgentDialog = false;
+    this.selectedEstateAgent = new EstateAgent();
+}
+
 
     deleteEstateAgent(agentId: string): void {
         const index = MOCK_ESTATE_AGENTS.findIndex((a) => a.id === agentId);
@@ -62,15 +86,17 @@ loadEstateAgents() {
     );
 }
 
-    showAddEstateAgentDialog() {
-        this.selectedEstateAgent = new EstateAgent();
-        this.estateAgentDialog = true;
-    }
+showAddEstateAgentDialog() {
+    this.selectedEstateAgent = new EstateAgent();
+    this.isNewEstateAgent = true;
+    this.estateAgentDialog = true;
+}
 
-    showEditEstateAgentDialog(estateAgent: EstateAgent) {
-        this.selectedEstateAgent = { ...estateAgent };
-        this.estateAgentDialog = true;
-    }
+showEditEstateAgentDialog(estateAgent: EstateAgent) {
+    this.selectedEstateAgent = { ...estateAgent };
+    this.isNewEstateAgent = false;
+    this.estateAgentDialog = true;
+}
 
     generateRandomId() {
         return 'xxxx-xxxx-4xxx-yxxx-xxxx-xxxx'.replace(/[xy]/g, function (c) {
@@ -91,6 +117,9 @@ loadEstateAgents() {
         this.estateAgentDialog = false;
         this.selectedEstateAgent = new EstateAgent();
     }
+
+
+
 
     deleteSelectedEstateAgents() {
         this.selectedEstateAgents.forEach((agent) => {
