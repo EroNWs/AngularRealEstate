@@ -1,0 +1,241 @@
+<div class="grid">
+    <!-- Aktif İlanlar -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Aktif İlanlar</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        {{ (dashboardSummary$ | async)?.activeListings }}
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                    [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+                >
+                    <i class="pi pi-home text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"
+                >{{ (dashboardSummary$ | async)?.newListings }} yeni</span
+            >
+            <span class="text-500"> bu hafta eklendi</span>
+        </div>
+    </div>
+
+    <!-- Toplam Satış Değeri -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Toplam Satış Değeri</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        ${{
+                            (dashboardSummary$ | async)?.totalSalesValue
+                                | number
+                        }}
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-orange-100 border-round"
+                    [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+                >
+                    <i class="pi pi-dollar text-orange-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"
+                >%{{ (dashboardSummary$ | async)?.salesIncrease }} artış</span
+            >
+            <span class="text-500"> geçen aya göre</span>
+        </div>
+    </div>
+
+    <!-- Müşteri Sayısı -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Müşteri Sayısı</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        {{ (dashboardSummary$ | async)?.customerCount }}
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                    [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+                >
+                    <i class="pi pi-users text-cyan-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"
+                >{{ (dashboardSummary$ | async)?.newCustomers }} yeni</span
+            >
+            <span class="text-500"> bu ay katıldı</span>
+        </div>
+    </div>
+
+    <!-- Yeni Geri Bildirimler -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Yeni Geri Bildirimler</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        {{ (dashboardSummary$ | async)?.unreadFeedbacks }}
+                        Okunmamış
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-purple-100 border-round"
+                    [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+                >
+                    <i class="pi pi-comments text-purple-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">{{
+                (dashboardSummary$ | async)?.respondedFeedbacks
+            }}</span>
+            <span class="text-500"> yanıtlandı</span>
+        </div>
+    </div>
+
+    <div class="col-12 xl:col-6">
+        <!-- Son Satışlar -->
+        <div class="card">
+            <h5>Son 2 Satış</h5>
+            <p-table
+                [value]="recentSales$ | async"
+                [paginator]="true"
+                [rows]="5"
+                responsiveLayout="scroll"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Resim</th>
+                        <th pSortableColumn="name">
+                            Emlak Adı <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="price">
+                            Fiyat <p-sortIcon field="price"></p-sortIcon>
+                        </th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-sale>
+                    <tr>
+                        <td style="width: 15%; min-width: 5rem">
+                            <img
+                                src="../../../../assets/demo/images/house/house2.jpg"
+                                class="shadow-4"
+                                alt="{{ sale.name }}"
+                                width="50"
+                            />
+                        </td>
+                        <td style="width: 35%; min-width: 7rem">
+                            {{ sale.name }}
+                        </td>
+                        <td style="width: 35%; min-width: 8rem">
+                            {{ sale.price | currency : "USD" }}
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <div class="col-12 xl:col-6">
+        <!-- Satış Genel Bakış -->
+        <div class="card">
+            <h5>Satış Genel Bakış</h5>
+            <p-chart
+                type="line"
+                [data]="salesOverview$ | async"
+                [options]="chartOptions"
+            ></p-chart>
+        </div>
+    </div>
+
+    <div class="col-12 xl:col-12">
+        <!-- Popüler İlanlar -->
+        <div class="card">
+            <h5>Popüler İlanlar</h5>
+            <ul class="list-none p-0 m-0">
+                <li
+                    *ngFor="let listing of popularListings$ | async"
+                    class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4 p-2 border-round border-1 surface-border"
+                >
+                    <div class="text-900 font-bold mb-2 md:mb-0">
+                        {{ listing.title }}
+                    </div>
+                    <div class="text-700 md:ml-2">
+                        <i class="pi pi-map-marker mr-1"></i>
+                        {{ listing.location }}
+                    </div>
+                    <div class="text-600 md:ml-2">
+                        <i class="pi pi-tag mr-1"></i>
+                        {{ listing.price | currency : "TRY" }}
+                    </div>
+                    <div class="text-500 md:ml-2">
+                        Popülerlik:
+                        <span class="text-blue-500 font-bold"
+                            >{{ listing.popularity }}%</span
+                        >
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-12 xl:col-12">
+        <!-- Bildirimler -->
+        <div class="card">
+            <h5>Bildirimler</h5>
+            <!-- Bildirimler listesi -->
+            <!-- Örnek bildirim -->
+            <div
+                *ngFor="let notification of notifications$ | async"
+                class="flex align-items-center py-2 border-bottom-1 surface-border"
+            >
+                <!-- Bildirim içeriği -->
+                {{ notification.content }}
+            </div>
+            <!-- Diğer bildirimler... -->
+        </div>
+    </div>
+</div>
+
+<div class="col-12 xl:col-12">
+    <div
+        class="px-4 py-5 shadow-2 flex flex-column md:flex-row md:align-items-center justify-content-between mb-3"
+        [ngStyle]="{
+            borderRadius: '1rem',
+            background:
+                'linear-gradient(0deg, rgba(0, 123, 255, 0.5), rgba(0, 123, 255, 0.5)), linear-gradient(92.54deg, #1C80CF 47.88%, #FFFFFF 100.01%)'
+        }"
+    >
+        <div>
+            <div class="text-blue-100 font-medium text-xl mt-2 mb-3">
+                Özel Etkinlikler
+            </div>
+            <div class="text-white font-medium text-5xl">Emlak Fuarı</div>
+        </div>
+        <div class="mt-4 mr-auto md:mt-0 md:mr-0">
+            <a
+                target="_blank"
+                href="https://www.expointurkey.org/tr/exhibitions/field_exhibition_subject/real-estate-26"
+                class="p-button font-bold px-5 py-3 p-button-warning p-button-rounded p-button-raised"
+            >
+                Detaylar
+            </a>
+        </div>
+    </div>
+</div>

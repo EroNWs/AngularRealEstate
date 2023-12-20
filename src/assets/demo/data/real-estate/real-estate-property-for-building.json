@@ -1,0 +1,14 @@
+{
+    "id": "234e4567-e89b-12d3-a456-426614174000",
+    "type": 1,
+    "status": 2,
+    "squareMeters": 95.0,
+    "address": "101 High Street",
+    "city": "Metropolis",
+    "district": "Eastside",
+    "roomCount": 4,
+    "floor": 3,
+    "buildingFloors": 10,
+    "buildingAge": 5,
+    "heatingType": 1
+  }

@@ -1,0 +1,15 @@
+{
+    "id": "789e4567-e89b-12d3-a456-426614174999",
+    "agentName": "Ace Realty",
+    "authorizedName": "Alice",
+    "authorizedSurname": "Johnson",
+    "authorizedSecondSurname": null,
+    "authorizedSecondName": null,
+    "address": "456 Side Street",
+    "city": "Metropolis",
+    "district": "Westside",
+    "postalCode": "12345",
+    "phone": "123-456-7890",
+    "fax": "123-456-7891",
+    "employeeCount": 10
+  }

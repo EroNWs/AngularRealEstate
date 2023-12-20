@@ -1,0 +1,15 @@
+export const API_ENDPOINTS = {
+    CUSTOMERS: '/api/Customers',
+    GETCUSTOMERS: '/apiCustomers/{id}',
+    ESTATE_AGENTS: '/api/EstateAgents',
+    GETESTATE_AGENTS: '/api/EstateAgents/{id}',
+    REAL_ESTATES: '/api/RealEstates',
+    GETREAL_ESTATES: '/api/RealEstates/{id}',
+    RENTALS: '/api/RealEstateTransactionForRentals',
+    GETRENTALS: '/api/RealEstateTransactionForRentals/{id}',
+    SALES: '/api/RealEstateTransactionForSales',
+    GETSALES: '/api/RealEstateTransactionForSales/{id}',
+    TRANSACTIONS: '/api/transactions',
+    LOGIN: '/api/Auth/Login',
+    REGISTER: '/api/Auth/Register',
+};

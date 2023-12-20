@@ -1,0 +1,14 @@
+{
+    "id": "567e4567-e89b-12d3-a456-426614174000",
+    "type": 2,
+    "status": 1,
+    "squareMeters": 500.0,
+    "address": "102 Country Road",
+    "city": "Riverside",
+    "district": "Rural",
+    "zoningStatus": 5,
+    "block": "A",
+    "parcel": "123",
+    "buildingCoverageRatio": 0.3,
+    "floorAreaRatio": 1.5
+  }

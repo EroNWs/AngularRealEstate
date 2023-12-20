@@ -1,0 +1,130 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-toast></p-toast>
+            <p-toolbar>
+                <div class="left">
+                    <button
+                        pButton
+                        label="Yeni Bina"
+                        icon="pi pi-plus"
+                        class="p-button-success mr-2"
+                        (click)="showAddRealEstateDialog()"
+                    ></button>
+                    <button
+                        pButton
+                        label="Sil"
+                        icon="pi pi-trash"
+                        class="p-button-danger"
+                        (click)="deleteSelectedRealEstates()"
+                        [disabled]="
+                            !selectedRealEstates || !selectedRealEstates.length
+                        "
+                    ></button>
+                </div>
+            </p-toolbar>
+
+            <p-table
+                [value]="realEstates"
+                [(selection)]="selectedRealEstates"
+                responsiveLayout="scroll"
+                [paginator]="true"
+                [rows]="10"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                dataKey="id"
+                selectionMode="multiple"
+                currentPageReportTemplate="Toplam {totalRecords} emlaktan {first} ile {last} arası gösteriliyor"
+                [(selection)]="selectedRealEstates"
+                [rowHover]="true"
+                [globalFilterFields]="['type', 'status', 'squareMeters']"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">Emlakları Yönet</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter($event)"
+                                placeholder="Ara..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                        <th>Tür</th>
+                        <th>Durum</th>
+                        <th>Metre Kare</th>
+                        <th>Adres</th>
+                        <th>Şehir</th>
+                        <th>İlçe</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-realEstate>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox
+                                [value]="realEstate"
+                            ></p-tableCheckbox>
+                        </td>
+                        <td>{{ realEstate.type }}</td>
+                        <td>{{ realEstate.status }}</td>
+                        <td>{{ realEstate.squareMeters }}</td>
+                        <td>{{ realEstate.address }}</td>
+                        <td>{{ realEstate.city }}</td>
+                        <td>{{ realEstate.district }}</td>
+                        <td>
+                            <button
+                                pButton
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-success mr-2"
+                                (click)="showEditRealEstateDialog(realEstate)"
+                            ></button>
+                            <button
+                                pButton
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-warning"
+                                (click)="confirmDeleteRealEstate(realEstate)"
+                            ></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<!-- Real Estate Dialog içeriği -->
+<p-dialog [(visible)]="realEstateDialog" header="Gayrimenkul Detayları">
+    <!-- Diğer içerikler -->
+    <div class="p-field">
+        <label for="transactionType">İşlem Türü</label>
+        <p-dropdown
+            id="transactionType"
+            [(ngModel)]="transactionType"
+            [options]="transactionTypes"
+            optionLabel="label"
+            placeholder="İşlem Türü Seçin"
+            (onChange)="onTransactionTypeChange($event.value)"
+        ></p-dropdown>
+    </div>
+
+    <div *ngIf="transactionType === 'sale'">
+        <!-- Satış için gerekli alanlar -->
+    </div>
+
+    <div *ngIf="transactionType === 'rental'">
+        <!-- Kiralama için gerekli alanlar -->
+    </div>
+
+    <!-- Ortak alanlar (Adres, Metrekare vb.) -->
+</p-dialog>

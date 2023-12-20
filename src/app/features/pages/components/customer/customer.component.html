@@ -1,0 +1,239 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-toast></p-toast>
+            <p-toolbar>
+                <div class="my-2">
+                    <button
+                        pButton
+                        pRipple
+                        label="Yeni Müşteri"
+                        icon="pi pi-plus"
+                        class="p-button-success mr-2"
+                        (click)="openNewCustomerDialog()"
+                    ></button>
+                    <button
+                        pButton
+                        pRipple0
+                        label="Sil"
+                        icon="pi pi-trash"
+                        class="p-button-danger"
+                        (click)="deleteSelectedCustomers()"
+                        [disabled]="
+                            !selectedCustomers || !selectedCustomers.length
+                        "
+                    ></button>
+                </div>
+            </p-toolbar>
+
+            <!-- Müşteri Listesi -->
+            <p-table
+                [value]="customers"
+                [columns]="customerCols"
+                responsiveLayout="scroll"
+                [paginator]="true"
+                [rows]="10"
+                [globalFilterFields]="['customerName', 'email', 'city']"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Toplam {totalRecords} müşteriden {first} ile {last} arası gösteriliyor"
+                [(selection)]="selectedCustomers"
+                selectionMode="multiple"
+                [rowHover]="true"
+                dataKey="id"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">Müşterileri Yönet</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter($event)"
+                                placeholder="Ara..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th
+                            *ngFor="let col of customerCols"
+                            pSortableColumn="{{ col.field }}"
+                        >
+                            {{ col.header }}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                        <th>İşlemler</th>
+                        <!-- Düzenle ve Sil butonları için bir kolon -->
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-customer>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox
+                                [value]="customer"
+                            ></p-tableCheckbox>
+                        </td>
+                        <td>{{ customer.customerName }}</td>
+                        <td>{{ customer.customerSurname }}</td>
+                        <td>{{ customer.birthDate | date : "yyyy-MM-dd" }}</td>
+                        <td>{{ customer.gender }}</td>
+                        <td>{{ customer.occupation }}</td>
+                        <td>{{ customer.address }}</td>
+                        <td>{{ customer.city }}</td>
+                        <td>{{ customer.district }}</td>
+                        <!-- Diğer hücreler ve özellikler eklenebilir... -->
+                        <td>
+                            <div class="flex">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success mr-2"
+                                    (click)="editCustomer(customer)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-warning"
+                                    (click)="confirmDeleteCustomer(customer)"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <!-- Müşteri Kayıt Dialogu -->
+        <p-dialog
+            [(visible)]="customerDialog"
+            [style]="{ width: '650px' }"
+            header="Müşteri Bilgileri Girişi"
+            [modal]="true"
+            class="p-fluid"
+        >
+            <div class="p-formgrid p-grid">
+                <!-- Adı -->
+                <div class="p-field p-col">
+                    <label for="name">Adı</label>
+                    <input
+                        type="text"
+                        pInputText
+                        id="name"
+                        [(ngModel)]="customer.customerName"
+                        required
+                    />
+                </div>
+
+                <!-- Soyadı -->
+                <div class="p-field p-col">
+                    <label for="surname">Soyadı</label>
+                    <input
+                        type="text"
+                        pInputText
+                        id="surname"
+                        [(ngModel)]="customer.customerSurname"
+                        required
+                    />
+                </div>
+
+                <!-- Doğum Tarihi -->
+                <div class="p-field p-col-12">
+                    <label for="birthdate">Doğum Tarihi</label>
+                    <p-calendar
+                        id="birthdate"
+                        [(ngModel)]="customer.birthDate"
+                        dateFormat="yy-mm-dd"
+                    ></p-calendar>
+                </div>
+
+                <!-- Cinsiyet -->
+                <div class="p-field p-col">
+                    <label for="gender">Cinsiyet</label>
+                    <p-dropdown
+                        id="gender"
+                        [options]="genderOptions"
+                        [(ngModel)]="customer.gender"
+                        placeholder="Cinsiyet Seçin"
+                    ></p-dropdown>
+                </div>
+
+                <!-- Meslek -->
+                <div class="p-field p-col">
+                    <label for="occupation">Meslek</label>
+                    <p-dropdown
+                        id="occupation"
+                        [options]="occupationOptions"
+                        [(ngModel)]="customer.occupation"
+                        placeholder="Meslek Seçin"
+                    ></p-dropdown>
+                </div>
+
+                <!-- Adres -->
+                <div class="p-field p-col-12">
+                    <label for="address">Adres</label>
+                    <input
+                        type="text"
+                        pInputText
+                        id="address"
+                        [(ngModel)]="customer.address"
+                    />
+                </div>
+
+                <!-- Şehir -->
+                <div class="p-field p-col-6">
+                    <label for="city">Şehir</label>
+                    <input
+                        type="text"
+                        pInputText
+                        id="city"
+                        [(ngModel)]="customer.city"
+                    />
+                </div>
+
+                <!-- İlçe -->
+                <div class="p-field p-col-6">
+                    <label for="district">İlçe</label>
+                    <input
+                        type="text"
+                        pInputText
+                        id="district"
+                        [(ngModel)]="customer.district"
+                    />
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="İptal"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideCustomerDialog()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    label="Kaydet"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="saveCustomer()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+{
+    "id": "456e4567-e89b-12d3-a456-426614174000",
+    "type": 1,
+    "status": 1,
+    "squareMeters": 120.5,
+    "address": "789 Outer Street",
+    "city": "Metropolis",
+    "district": "Northside",
+    "transactionId": null,
+    "transactionType": 3
+  }
